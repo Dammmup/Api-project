@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Случайная цитата Рона Свонсона</title>
+ 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
+    <style>
+       
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="rrre" style="width:1300px;height: 1600px;
+    background: darkcyan;">
+    <div class="rrr" style="width:1200px;
+    height: 1500px; background: lightcyan; display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;">
+    <h1>Случайная цитата Рона Свонсона</h1>
+   
+    <p id="quote" class="quote"></p>
+    <p id="translation" class="translation"></p>
+</div>
+</div>
+    <script>
+      
+        function typeWriter(text, i, element) {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(function() {
+                    typeWriter(text, i, element);
+                }, 70); 
+            }
+        }
+
+      
+        fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes', {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                
+                const quoteInEnglish = data[0];
+                const quoteElement = document.getElementById('quote');
+                quoteElement.textContent = '';
+                typeWriter(quoteInEnglish, 0, quoteElement);
+
+             
+                setTimeout(function() {
+                    fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ru&dt=t&q=' + encodeURIComponent(quoteInEnglish))
+                        .then(response => response.json())
+                        .then(data => {
+                          
+                            const translatedQuote = data[0][0][0];
+                            const translationElement = document.getElementById('translation');
+                            translationElement.textContent = translatedQuote;
+                        })
+                        .catch(error => {
+                            console.error('Произошла ошибка при переводе:', error);
+                        });
+                }, quoteInEnglish.length * 70); цитаты
+            })
+            .catch(error => {
+                console.error('Произошла ошибка:', error);
+            });
+    </script>
+</body>
+</html>
